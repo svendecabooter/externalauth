@@ -1,0 +1,8 @@
+services:
+  externalauth.authmap:
+    class: Drupal\externalauth\Authmap
+    arguments: ['@database']
+  externalauth.externalauth:
+    class: Drupal\externalauth\ExternalAuth
+    arguments: ['@entity.manager', '@externalauth.authmap']
+
