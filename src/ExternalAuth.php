@@ -108,11 +108,7 @@ class ExternalAuth implements ExternalAuthInterface {
   }
 
   /**
-   * Finalize logging in the external user.
-   * Encapsulates user_login_finalize.
-   *
-   * @param UserInterface $account
-   * @return UserInterface
+   * @inheritdoc
    *
    * @codeCoverageIgnore
    */

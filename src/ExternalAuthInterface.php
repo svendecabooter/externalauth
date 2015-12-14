@@ -61,4 +61,15 @@ interface ExternalAuthInterface {
    * @return \Drupal\user\UserInterface
    */
   public function loginRegister($authname, $provider);
+
+  /**
+   * Finalize logging in the external user.
+   * Encapsulates user_login_finalize.
+   *
+   * @param UserInterface $account
+   * @return UserInterface
+   *
+   * @codeCoverageIgnore
+   */
+  public function userLoginFinalize($account);
 }
