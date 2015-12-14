@@ -21,11 +21,11 @@ interface AuthmapInterface {
    *
    * @param \Drupal\user\UserInterface $account
    *   The Drupal user account.
-   * @param $provider
+   * @param string $provider
    *   The name of the service providing external authentication.
-   * @param $authname
+   * @param string $authname
    *   The unique, external authentication name provided by authentication provider.
-   * @param $data
+   * @param mixed $data
    *   Optional extra (serialized) data to store with the authname.
    */
   public function save(UserInterface $account, $provider, $authname, $data = NULL);
@@ -37,7 +37,7 @@ interface AuthmapInterface {
    *   The Drupal user ID.
    * @param string $provider
    *   The name of the service providing external authentication.
-   * @return array|mixed
+   * @return string
    *   The external authname / ID.
    */
   public function get($uid, $provider);
@@ -45,9 +45,9 @@ interface AuthmapInterface {
 
   /**
    * Get the external authname & extra data for a given user ID.
-   * @param $uid
+   * @param int $uid
    *   The Drupal user ID.
-   * @param $provider
+   * @param string $provider
    *   The name of the service providing external authentication.
    * @return array
    *   An array with authname & data values.
@@ -57,7 +57,7 @@ interface AuthmapInterface {
   /**
    * Get all external authnames for a given user ID.
    *
-   * @param $uid
+   * @param int $uid
    *   The Drupal user ID.
    * @return array
    *   An array of external authnames / IDs for the given user ID, keyed by
@@ -69,11 +69,11 @@ interface AuthmapInterface {
    * Get a Drupal user ID based on an authname provided by an authentication
    * provider.
    *
-   * @param $authname
+   * @param string $authname
    *   The external authname as provided by the authentication provider.
-   * @param $provider
+   * @param string $provider
    *   The name of the service providing external authentication.
-   * @return int $uid|bool
+   * @return int|bool $uid
    */
   public function getUid($authname, $provider);
 

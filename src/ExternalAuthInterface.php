@@ -44,12 +44,9 @@ interface ExternalAuthInterface {
    *   The unique, external authentication name provided by authentication provider.
    * @param string $provider
    *   The module providing external authentication.
-   * @param string $username
-   *   Optionally provide a username. Make sure it is unique. If not provided,
-   *   the username will default to <provider>_<authname>
    * @return \Drupal\user\UserInterface
    */
-  public function register($authname, $provider, $username = NULL);
+  public function register($authname, $provider);
 
   /**
    * Login, and optionally register, a Drupal user based on an external authname.
