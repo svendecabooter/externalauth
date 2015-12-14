@@ -116,7 +116,7 @@ class ExternalAuth implements ExternalAuthInterface {
    *
    * @codeCoverageIgnore
    */
-  protected function userLoginFinalize($account) {
+  public function userLoginFinalize($account) {
     user_login_finalize($account);
     $this->logger->notice('External login of user %name', array('%name' => $account->getAccountName()));
     return $account;
