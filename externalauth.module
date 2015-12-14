@@ -22,3 +22,14 @@ function externalauth_help($route_name, RouteMatchInterface $route_match) {
     default:
   }
 }
+
+/**
+ * Implements hook_user_delete().
+ *
+ * @param $account
+ */
+function externalauth_user_delete($account) {
+  // Delete authmap entries when a user gets deleted.
+  $authmap = \Drupal::service('externalauth.authmap');
+  $authmap->delete($account->id());
+}
