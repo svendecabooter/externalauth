@@ -42,6 +42,13 @@ class ExternalAuthTest extends UnitTestCase {
   protected $logger;
 
   /**
+   * The mocked event dispatcher.
+   *
+   * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface
+   */
+  protected $eventDispatcher;
+
+  /**
    * {@inheritdoc}
    */
   protected function setUp() {
@@ -52,6 +59,11 @@ class ExternalAuthTest extends UnitTestCase {
 
     // Create a Mock Logger object.
     $this->logger = $this->getMockBuilder('\Psr\Log\LoggerInterface')
+      ->disableOriginalConstructor()
+      ->getMock();
+
+    // Create a Mock EventDispatcher object.
+    $this->eventDispatcher = $this->getMockBuilder('\Symfony\Component\EventDispatcher\EventDispatcherInterface')
       ->disableOriginalConstructor()
       ->getMock();
 
@@ -91,7 +103,8 @@ class ExternalAuthTest extends UnitTestCase {
     $externalauth = new ExternalAuth(
       $this->entityManager,
       $authmap,
-      $this->logger
+      $this->logger,
+      $this->eventDispatcher
     );
     $result = $externalauth->load("test_authname", "test_provider");
     $this->assertTrue($result instanceof UserInterface);
@@ -109,7 +122,8 @@ class ExternalAuthTest extends UnitTestCase {
       ->setConstructorArgs(array(
         $this->entityManager,
         $this->authmap,
-        $this->logger
+        $this->logger,
+        $this->eventDispatcher
       ))
       ->getMock();
 
@@ -158,10 +172,30 @@ class ExternalAuthTest extends UnitTestCase {
     $authmap->expects($this->once())
       ->method('save');
 
+    //$dispatched_event = $this->getMockBuilder('\Symfony\Component\EventDispatcher\Event')
+    $dispatched_event = $this->getMockBuilder('\Drupal\externalauth\Event\ExternalAuthAuthmapAlterEvent')
+      ->disableOriginalConstructor()
+      ->getMock();
+
+    $dispatched_event->expects($this->any())
+      ->method('getUsername')
+      ->will($this->returnValue("Test username"));
+    $dispatched_event->expects($this->any())
+      ->method('getAuthname')
+      ->will($this->returnValue("Test authname"));
+    $dispatched_event->expects($this->any())
+      ->method('getData')
+      ->will($this->returnValue("Test data"));
+
+    $this->eventDispatcher->expects($this->any())
+      ->method('dispatch')
+      ->will($this->returnValue($dispatched_event));
+
     $externalauth = new ExternalAuth(
       $this->entityManager,
       $authmap,
-      $this->logger
+      $this->logger,
+      $this->eventDispatcher
     );
     $result = $externalauth->register("test_authname", "test_provider");
     $this->assertTrue($result instanceof UserInterface);
@@ -181,7 +215,8 @@ class ExternalAuthTest extends UnitTestCase {
       ->setConstructorArgs(array(
         $this->entityManager,
         $this->authmap,
-        $this->logger
+        $this->logger,
+        $this->eventDispatcher
       ))
       ->getMock();
 
