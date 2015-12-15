@@ -92,7 +92,7 @@ class ExternalAuth implements ExternalAuthInterface {
     $account = $entity_storage->create(
       array(
         'name' => $authmap_event->getUsername(),
-        'init' => $authmap_event->getAuthname(),
+        'init' => $provider . '_' . $authmap_event->getAuthname(),
         'status' => 1,
         'access' => (int) $_SERVER['REQUEST_TIME'],
       )
