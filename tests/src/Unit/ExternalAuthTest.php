@@ -172,7 +172,6 @@ class ExternalAuthTest extends UnitTestCase {
     $authmap->expects($this->once())
       ->method('save');
 
-    //$dispatched_event = $this->getMockBuilder('\Symfony\Component\EventDispatcher\Event')
     $dispatched_event = $this->getMockBuilder('\Drupal\externalauth\Event\ExternalAuthAuthmapAlterEvent')
       ->disableOriginalConstructor()
       ->getMock();
@@ -233,5 +232,52 @@ class ExternalAuthTest extends UnitTestCase {
 
     $result = $externalauth->loginRegister("test_authname", "test_provider");
     $this->assertTrue($result instanceof UserInterface);
+  }
+
+  public function testLinkExistingAccount() {
+    $account = $this->getMock('Drupal\user\UserInterface');
+    $account->expects($this->once())
+      ->method('id')
+      ->will($this->returnValue(5));
+
+    // Set up a mock for Authmap class,
+    // mocking get() & save() methods
+    $authmap = $this->getMockBuilder('\Drupal\externalauth\Authmap')
+      ->disableOriginalConstructor()
+      ->setMethods(array('save', 'get'))
+      ->getMock();
+
+    $authmap->expects($this->once())
+      ->method('get')
+      ->will($this->returnValue(FALSE));
+
+    $authmap->expects($this->once())
+      ->method('save');
+
+    $dispatched_event = $this->getMockBuilder('\Drupal\externalauth\Event\ExternalAuthAuthmapAlterEvent')
+      ->disableOriginalConstructor()
+      ->getMock();
+
+    $dispatched_event->expects($this->any())
+      ->method('getUsername')
+      ->will($this->returnValue("Test username"));
+    $dispatched_event->expects($this->any())
+      ->method('getAuthname')
+      ->will($this->returnValue("Test authname"));
+    $dispatched_event->expects($this->any())
+      ->method('getData')
+      ->will($this->returnValue("Test data"));
+
+    $this->eventDispatcher->expects($this->any())
+      ->method('dispatch')
+      ->will($this->returnValue($dispatched_event));
+
+    $externalauth = new ExternalAuth(
+      $this->entityManager,
+      $authmap,
+      $this->logger,
+      $this->eventDispatcher
+    );
+    $externalauth->linkExistingAccount("test_authname", "test_provider", $account);
   }
 }

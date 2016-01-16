@@ -62,7 +62,10 @@ class Authmap implements AuthmapInterface {
       ->range(0, 1)
       ->execute()
       ->fetchObject();
-    return $authname->authname;
+    if ($authname) {
+      return $authname->authname;
+    }
+    return FALSE;
   }
 
   /**

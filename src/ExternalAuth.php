@@ -12,6 +12,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Drupal\externalauth\Event\ExternalAuthEvents;
 use Drupal\externalauth\Event\ExternalAuthRegisterEvent;
 use Drupal\externalauth\Event\ExternalAuthAuthmapAlterEvent;
+use Drupal\user\UserInterface;
 
 /**
  * Class ExternalAuth.
@@ -124,9 +125,20 @@ class ExternalAuth implements ExternalAuthInterface {
    *
    * @codeCoverageIgnore
    */
-  public function userLoginFinalize($account) {
+  public function userLoginFinalize(UserInterface $account) {
     user_login_finalize($account);
     $this->logger->notice('External login of user %name', array('%name' => $account->getAccountName()));
     return $account;
+  }
+
+  /**
+   * @inheritdoc
+   */
+  public function linkExistingAccount($authname, $provider, UserInterface $account) {
+    if (!$this->authmap->get($account->id(), $provider)) {
+      $username = $provider . '_' . $authname;
+      $authmap_event = $this->eventDispatcher->dispatch(ExternalAuthEvents::AUTHMAP_ALTER, new ExternalAuthAuthmapAlterEvent($provider, $authname, $username, NULL));
+      $this->authmap->save($account, $provider, $authmap_event->getAuthname(), $authmap_event->getData());
+    }
   }
 }

@@ -7,6 +7,8 @@
 
 namespace Drupal\externalauth;
 
+use Drupal\user\UserInterface;
+
 /**
  * Interface ExternalAuthInterface.
  *
@@ -63,10 +65,22 @@ interface ExternalAuthInterface {
    * Finalize logging in the external user.
    * Encapsulates user_login_finalize.
    *
-   * @param UserInterface $account
-   * @return UserInterface
+   * @param \Drupal\user\UserInterface $account
+   * @return \Drupal\user\UserInterface
    *
    * @codeCoverageIgnore
    */
-  public function userLoginFinalize($account);
+  public function userLoginFinalize(UserInterface $account);
+
+  /**
+   * Link a pre-existing Drupal user to a given authname
+   *
+   * @param string $authname
+   *   The unique, external authentication name provided by authentication provider.
+   * @param string $provider
+   *   The module providing external authentication.
+   * @param \Drupal\user\UserInterface $account
+   */
+  public function linkExistingAccount($authname, $provider, UserInterface $account);
+
 }
